@@ -1,0 +1,64 @@
+# params.yaml — параметры пайплайна ЕГРОКН-Алтай (заход 12)
+# Значения зафиксированы по скриптам статьи (layers_and_results.py, build_final_table.py, egrkn_pipeline_v131.py).
+
+krai_bbox:
+  lat_min: 49.0
+  lat_max: 54.5      # build_final_table.py:181 (coord_outside_krai)
+  lon_min: 76.0
+  lon_max: 88.5      # build_final_table.py:181
+  # примечание: egrkn_pipeline_v131.py:64 использует 49.0–56.0 / 78.0–91.0 (отбор selfCoord);
+  # рамка 49.0–54.5 / 76.0–88.5 — для geo-QC (coord_outside_krai).
+
+thresholds:
+  fuzzy_match: 0.85          # layers_and_results.py:154 (SequenceMatcher для name_fuzzy_unique)
+  name_mismatch_ratio: 1.0   # таблица 5: расхождение наименований (ratio < 1.0)
+  name_low_similarity: 0.60  # таблица 5: сходство ниже 60/100 (ratio < 0.60)
+  dup_max_m: 150.0           # geo_qc_blindzone.py:12 (дубликаты по name_norm + <=150 м)
+
+pilots:
+  - Солтонский
+  - Красногорский
+  - Змеиногорский
+
+expected:
+  records_total: 4518        # build_final_table.py:8
+  records_altai_region: 4516 # probe_report: altai_by_region
+  list_records: 2204         # Spisok…md: «Всего записей»
+  list_recovered_fixed: 2204 # s04 (исправленный парсер)
+  exact_matches: 2201        # s05
+  dump_in_list: 2200         # s05
+  districts_assigned: 2131   # s06 (v3)
+  districts_unset: 2385      # 4516 − 2131
+  polygon_dump: 99           # s07
+  polygon_dump_in_list: 97
+  polygon_list: 97
+  polygon_dump_by_district: {Змеиногорский: 67, Красногорский: 19, Солтонский: 13}
+  polygon_list_by_district: {Змеиногорский: 65, Красногорский: 19, Солтонский: 13}
+  geo_classes: {ок: 12, вне_своего_района: 0, вне_пилотных_районов: 0}
+  no_district_with_coords: 39
+  min_distance_m: 6693       # не воспроизведено из скриптов — см. отчёт захода 12
+  regnumbers_zero_loss: 47   # <15 цифр
+  regnumbers_restored: 46
+  name_pairs_compared: 2198
+  name_mismatch: 95
+  name_below_60: 18
+  v2_v3_diffs: 102
+
+checksums:
+  sha256_regnumbers: 86afa4ab35e33724e918b387718ecea5590a9d98f39159f05cbe61a1f00bad89   # egrkn_pipeline_v131.py:3
+  sha256_districts: 8734de19653642edd80310aa0dc5cd1db862fb9169ca538285c91165eb9196ac   # build_final_table.py:10
+  # эталонные sha256 derived-файлов — в expected/sha256_derived.csv и CHECKSUMS.sha256
+
+statistics:
+  wilson_z: 1.96              # 95% интервал Уилсона
+  # проверено на значениях статьи (stats_check.py):
+  #   25,7 (23,5–28,1) / 56,5 (52,3–60,6); z = −12,84 (статья −12,8) — воспроизведено
+  #   20,7 (18,6–22,9) / 63,7 (59,6–67,7); z = −18,04 (статья −18,0) — воспроизведено
+  #   z таблицы 4 (мемориалы 2,3; −0,5; прочие 0,8; −6,6; градостроительство −9,8; −10,6) — НЕ воспроизведено (контекст не установлен)
+
+input_data:
+  dump_received: 2026-09-09   # дата получения дампа ЕГРОКН (17 файлов JSON)
+  dump_source: ЕГРОКН (esb.mkrf.ru), выгрузка по регионам
+  list_source: ukn.alregn.ru (краевой список ОКН)
+  oktmo_source: Перечень муниципальных образований Алтайского края на 01.01.2026
+  # сами дамп ЕГРОКН (1.json…17.json) и PDF списка в репозиторий НЕ копируются (см. data/input_manifest/)
