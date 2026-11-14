@@ -1,5 +1,3 @@
-ЧЕРНОВИК, ждёт решения авторов.
-
 MIT License
 
 Copyright (c) 2026 Г. З. Папашвили, А. Д. Дерендяева
@@ -21,6 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Назначение: исходный код пайплайна (src/*.py, tests/*.py, legacy/*.py).
-Данные сторонних источников (ЕГРОКН, краевой список, OSM) лицензируются отдельно — см. LICENSE-DATA и THIRD_PARTY.md.

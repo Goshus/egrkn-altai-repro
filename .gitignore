@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+build/
+
+# Входные данные и кэш запросов (в репозиторий не добавляются)
+inputs/
+cache_nominatim/
+
+# Служебные файлы систем
+.DS_Store
+Thumbs.db

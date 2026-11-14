@@ -1,16 +1,16 @@
-# data/input_manifest/ — манифест входных данных
+# data/input_manifest/ — манифест входных файлов
 
-Сами дамп ЕГРОКН (17 файлов JSON, ~750 МБ) и PDF краевого списка ГУКН в репозиторий НЕ копируются. Здесь — только манифест: sha256, размер, источник, дата получения.
+Манифест описывает входные файлы пайплайна: контрольные суммы, размеры, источники и дату получения (09.09.2026).
 
 ## Файлы
-- `manifest_dump.csv` — sha256 и размер 17 файлов дампа ЕГРОКН (1.json…17.json). Совпадает с эталоном захода 1 (manifest_run1_v131.csv). Дата получения: 2026-09-09.
-- `probe_report.csv` — диагностика отбора по каждому файлу (records_total, altai_by_region, altai_by_regnum22, region_not_regnum). Сумма altai_by_region = 4516.
-- `structure-17.json` — JSON-схема канонической модели Heritage (esb.mkrf.ru/cdm/v2/heritages). Используется для понимания структуры записей дампа.
+- `manifest_dump.csv` — sha256 и размер 17 файлов дампа ЕГРОКН (`1.json` … `17.json`).
+- `probe_report.csv` — результат отбора записей по каждому файлу дампа (`records_total`, `altai_by_region`, `altai_by_regnum22`, `region_not_regnum`); сумма `altai_by_region` равна 4516.
+- `structure-17.json` — схема канонической модели Heritage (esb.mkrf.ru/cdm/v2/heritages), описывающая структуру записей дампа.
 
 ## Источники
-- Дамп ЕГРОКН: выгрузка из esb.mkrf.ru (каноническая модель ru.armf.mkesb.model.canonical.heritage.Heritage); не публичный API — получение у авторов или из источника.
-- Краевой список ГУКН: ukn.alregn.ru (PDF); преобразование PDF→md выполнено внешним инструментом (не установлен). md-файл в репозиторий не входит; структура проверяется `src/verify_markdown.py`.
-- Перечень ОКТМО: `data/reference/` (открытые данные РФ, 7705851331-egrkn).
+- Дамп ЕГРОКН: выгрузка из esb.mkrf.ru (каноническая модель `ru.armf.mkesb.model.canonical.heritage.Heritage`), публичная часть реестра; файлы предоставляются авторами по запросу.
+- Краевой список: ukn.alregn.ru (PDF), преобразованный в Markdown; структуру результата проверяет `src/verify_markdown.py`.
+- Перечень ОКТМО: `data/reference/`.
 
 ## Контроль
-`sha256sum -c` по `manifest_dump.csv` (поле sha256) — сверка дампа при получении от авторов.
+Для сверки дампа с манифестом выполните `sha256sum` по файлам `1.json` … `17.json` и сравните со столбцом `sha256` в `manifest_dump.csv`.

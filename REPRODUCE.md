@@ -1,36 +1,39 @@
 # REPRODUCE.md — пошаговое воспроизведение
 
 ## Предварительные условия
-- Python 3.10+ (стандартная библиотека; matplotlib необязателен — только для рисунков).
-- Входные данные (НЕ входят в репозиторий):
-  - дамп ЕГРОКН: 17 файлов `1.json`…`17.json` (sha256 в `data/input_manifest/manifest_dump.csv`), получен 09.09.2026;
-  - краевой список ГУКН: `Spisok-obektov-kulturnogo-naslediya (ukn.alregn.ru).md` (преобразование PDF→md выполнено внешним инструментом; проверить структуру: `python src/verify_markdown.py --md <path>`);
-  - перечень муниципальных образований Алтайского края на 01.01.2026 (`.docx`) — `data/reference/`;
-  - границы пилотных районов `boundary_1..3.json` — `data/boundaries/` (ODbL 1.0, © OpenStreetMap); для повторной выгрузки `python src/s00_fetch_boundaries.py --mode refetch --boundaries-dir data/boundaries --cache-dir cache_nominatim` (требует доступа в интернет; скрипт не проверен запуском).
+- Python 3.12 (проверено); зависимости — `pip install -r requirements.txt` (matplotlib — рисунки, pyproj — расстояния до границы, PyYAML — необязательно).
+- Для тестов: `pip install pytest`.
+
+## Входные данные для перегенерации
+
+| Файл | Источник | Где взять |
+|---|---|---|
+| `1.json` … `17.json` — дамп ЕГРОКН | Минкультуры России, публичная часть ЕГРОКН (esb.mkrf.ru), получен 09.09.2026 | по запросу к авторам; sha256 и размеры — `data/input_manifest/manifest_dump.csv` |
+| `Spisok-obektov-kulturnogo-naslediya (ukn.alregn.ru).md` — краевой список в формате Markdown | PDF с сайта ukn.alregn.ru (94 с.), преобразованный в Markdown; sha256 `1d0d97cbb308489bd4cc044749683e05bfc1ef203b26dd00ef33800dfb102518` | по запросу к авторам; структуру проверяет `python src/verify_markdown.py --md <файл>` |
+| Перечень муниципальных образований Алтайского края на 01.01.2026 (`.docx`) | открытые данные, набор 7705851331-egrkn | `data/reference/` |
+| `boundary_1.json` … `boundary_3.json` — границы районов | OpenStreetMap, ODbL 1.0 | `data/boundaries/` |
 
 ## Шаги
-1. Положить входные данные в папку `inputs/` (или использовать `--inputs <dir>`).
+1. Положить входные файлы в папку `inputs/` (или указать другую через `--inputs`).
 2. `python src/run_all.py --inputs inputs` — перегенерирует `data/derived/`:
-   - s06 → `egrkn_altai_final.csv` (32 колонки; контроль 4518, sha256 регномеров 86afa4ab…, sha256 районов 8734de19…);
-   - s04 → `gukn_spisok_all_fixed.csv` (2204);
-   - s05 → `matches_fixed.csv`, `list_only_fixed.csv`, `dump_only_pilot_fixed.csv`;
-   - s07 → `geo_diagnostics.csv`;
-   - s08 → `results_long_fixed.csv`, `table_2_coverage.csv`, `table_5_discrepancies.csv`.
-3. `python src/run_all.py --check` — приёмка контрольных значений и sha256.
-4. (опционально) `python src/s09_orders_trace.py --egrkn data/derived/egrkn_altai_final.csv --list data/derived/gukn_spisok_all_fixed.csv --manual data/manual/blind_zone_report_manual.csv --out data/derived/blind_zone_report.csv`.
-5. (опционально) `python src/s10_figures.py --geo data/derived/geo_diagnostics.csv --boundaries-dir data/boundaries --perechen data/manual/perechen_check.csv --auto data/derived/blind_zone_report.csv --out-dir figures/ --mode both` (рис. 1, 2; PNG 300 dpi; DejaVu Sans; числа из данных).
+   - `s06` → `egrkn_altai_final.csv` (32 колонки; 4518 записей, sha256 регистрационных номеров `86afa4ab…`, sha256 районов `8734de19…`);
+   - `s04` → `gukn_spisok_all_fixed.csv` (2204 записи);
+   - `s05` → `matches_fixed.csv`, `list_only_fixed.csv`, `dump_only_pilot_fixed.csv`;
+   - `s07` → `geo_diagnostics.csv`;
+   - `s03` → `egrkn_meta.csv`;
+   - `s08` → `results_long_fixed.csv`, `table_2_coverage.csv`, `table_3_field_completeness.csv`, `table_4_groups.csv`, `table_5_discrepancies.csv`.
+3. `python src/run_all.py --check` — сверка контрольных значений и sha256 результатов.
+4. Объекты из приказов о включении в перечень выявленных:
+   `python src/s09_orders_trace.py --egrkn data/derived/egrkn_altai_final.csv --list data/derived/gukn_spisok_all_fixed.csv --manual data/manual/blind_zone_report_manual.csv --out data/derived/blind_zone_report.csv`
+5. Рисунки 1 и 2 (PNG, 300 dpi):
+   `python src/s10_figures.py --geo data/derived/geo_diagnostics.csv --boundaries-dir data/boundaries --perechen data/manual/perechen_check.csv --auto data/derived/blind_zone_report.csv --out-dir figures`
+   Скрипт выводит числа по районам и результат автоматической проверки наложений подписей.
 
-## Проверка замороженных файлов
-Без перегенерации: `python src/run_all.py --check` сверяет `data/derived/` с контрольными значениями.
-`sha256sum -c CHECKSUMS.sha256` — сверка всех файлов репозитория.
+## Проверка без перегенерации
+`python src/run_all.py --check` сверяет `data/derived/` с контрольными значениями; `sha256sum -c CHECKSUMS.sha256` проверяет файлы репозитория.
 
-## Что НЕ воспроизводится из публичных источников
-- Дамп ЕГРОКН (17 файлов JSON): выгрузка из esb.mkrf.ru, не публичный API; sha256 в манифесте, но сами файлы нужно получить у авторов или из источника.
-- PDF краевого списка ГУКН (ukn.alregn.ru): преобразование в md выполнено внешним инструментом (не установлен); в репозитории только md (через `data/input_manifest/` указано отсутствие PDF).
-- Верификационная выборка `verification_sample_FINAL_checked.xlsx` — ручная разметка (`data/manual/`).
-- Эталон ручной части реестра приказов ВОКН `blind_zone_report_manual.csv` — ручная разметка (`data/manual/`); реквизиты 19 приказов сверены с прежним `prikazy_vokn_2019_2026.csv` (19/19 совпадение, см. отчёт захода 13).
+## Ручная разметка
+`data/manual/blind_zone_report_manual.csv` (реестр приказов), `data/manual/perechen_check.csv` (наличие объектов в перечне выявленных на апрель 2026 г.) и `data/manual/verification_sample_FINAL_checked.xlsx` (контрольная выборка из 20 записей, составленная вручную) — результаты ручной работы авторов; шаги скриптов используют их как входные данные.
 
-## Известные расхождения
-- Минимальное расстояние до границы (заход 14): локальная азимутальная эквидистантная проекция (AEQD), эллипсоид WGS 84 — 6707,864 м (E02493; ближайшая точка границы — вершина полигона). Значение зафиксировано в `data/derived/geo_boundary_distances.csv` и сверяется командой `python src/run_all.py --check`. Раннее значение 6693 м (заход 13) относилось к сферической метрике haversine (R=6371000) и заменено как менее точное.
-- Минимальное расстояние 6693 м (приёмка) не воспроизведено: `layers_and_results.py` и `geo_qc_blindzone.py` не вычисляют мин. расстояние как отдельную метрику; `geo_qc_blindzone.py` считает дубликаты по `name_norm + haversine ≤ 150 м` (DUP_MAX_M). Ближайшие кандидаты в г. Барнаул (16 пар 6647–6766 м, мин. 6647 E00437–E01292); пилотные 12 точек Змеиногорского → 35,1 м (элементы «Комплекса исторического центра»). Контекст «6693 м» не установлен.
-- z таблицы 4 (мемориалы 2,3; −0,5; прочие 0,8; −6,6; градостроительство −9,8; −10,6) — не воспроизведено: состав сравниваемых групп и пары (k1,n1)↔(k2,n2) не установлены из скриптов.
+## Метрика расстояния до границы
+Расстояние до границы района считается в локальной азимутальной эквидистантной проекции на эллипсоиде WGS 84; значения для 12 записей Змеиногорского района — в `data/derived/geo_boundary_distances.csv` (минимум 6707,864 м, запись E02493).
