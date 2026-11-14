@@ -8,7 +8,7 @@
                   и sha256; не требует входных дампов (они не входят в репозиторий).
 
 Приёмка (статья): 4518/4516; 2204; 2201 из 2204; 2200 из 4516; район не установлен 2385 (2131 назначено);
-полигон 97 из 99 (67/19/13; 65/19/13); 12/0/0; 39 без района с координатами; мин. расстояние 6693 м;
+полигон 97 из 99 (67/19/13; 65/19/13); 12/0/0; 39 без района с координатами; мин. расстояние 6707,864 м;
 47 и 46; 95 из 2198; 18 ниже 0,60; sha256 86afa4ab… и 8734de19….
 """
 import argparse, csv, hashlib, os, re, sys, math
@@ -65,7 +65,7 @@ def check():
     dump_in_list = sum(1 for r in altai if regkey(r['registry_number']) in list_regs)
     expect(dump_in_list == 2200, f'дамп в списке: {dump_in_list} (ожидалось 2200 из 4516)')
 
-    # geo_diagnostics.csv: 12/0/0; расстояние до границы в ОДНОЙ метрике AEQD/WGS84 (заход 14, задача 1)
+    # geo_diagnostics.csv: 12/0/0; расстояние до границы в ОДНОЙ метрике AEQD/WGS84
     geo = load(os.path.join(DERIVED, 'geo_diagnostics.csv'))
     cnt = Counter(g['class'] for g in geo)
     expect(cnt.get('ок', 0) == 12 and cnt.get('вне своего района', 0) == 0 and cnt.get('вне пилотных районов', 0) == 0,

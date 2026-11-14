@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """s07_geo_control.py — шаг 7 статьи: географический контроль пилотных районов (point-in-polygon).
 
-Источник: layers_and_results.py:69-93 (point_in_poly, load_boundaries), 202-216 (R2 geo).
-Рефакторинг: пути через argparse; общие функции в common/. Логика НЕ изменена.
+Пути задаются через argparse; общие функции — в common/
 
 Шаг статьи → скрипт → выход → таблица:
   «полигон: 12/0/0 с координатами; минимальное расстояние до границы 6707,864 м (E02493, AEQD/WGS84)» → s07 → geo_diagnostics.csv, geo_boundary_distances.csv → таблица 4, рис. 1.
@@ -45,13 +44,13 @@ def load_boundaries(boundaries_dir):
 
 def haversine_m(lat1, lon1, lat2, lon2):
     """Сферическое расстояние (R=6371000, haversine). Оставлено для совместимости;
-    в метрике «расстояние до границы» (заход 14) не используется — см. AEQD-функции ниже."""
+    в метрике «расстояние до границы» не используется — см. AEQD-функции ниже."""
     R = 6371000.0; p1, p2 = math.radians(lat1), math.radians(lat2)
     dp, dl = math.radians(lat2-lat1), math.radians(lon2-lon1)
     a = math.sin(dp/2)**2 + math.cos(p1)*math.cos(p2)*math.sin(dl/2)**2
     return 2*R*math.asin(math.sqrt(a))
 
-# Заход 14, задача 1: ОДНА метрика для (а) и (б) — локальная азимутальная эквидистантная
+# Одна метрика для (а) и (б) — локальная азимутальная эквидистантная
 # проекция (AEQD) вокруг точки P на эллипсоиде WGS84. AEQD сохраняет расстояние от центра P,
 # поэтому P→вершина в плоскости = истинное геодезическое P→вершина; P→отрезок (планарное,
 # с проекцией t∈[0,1]) ≤ P→вершина, т.к. концы отрезка — вершины. Условие (б) ≤ (а) — гарантировано.
@@ -113,7 +112,7 @@ def main(egrkn_csv, boundaries_dir, out_path):
     from collections import Counter
     cnt = Counter(g[2] for g in geo)
     # расстояния от точек внутри полигона (класс «ок») до границы района
-    # (а) по вершинам haversine; (б) по отрезкам (equirect-проекция)
+    # (а) по вершинам и (б) по отрезкам в проекции AEQD/WGS84
     rows_bd, min_v, min_s = [], None, None
     for g in geo:
         if g[2] != 'ок': continue
