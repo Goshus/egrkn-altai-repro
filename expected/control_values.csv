@@ -25,7 +25,7 @@ name_below_60;18;
 v2_v3_diffs;102;
 sha256_regnumbers;86afa4ab35e33724e918b387718ecea5590a9d98f39159f05cbe61a1f00bad89;
 sha256_districts;8734de19653642edd80310aa0dc5cd1db862fb9169ca538285c91165eb9196ac;
-min_dist_to_boundary_vertices_m;6707.864;"E02493; AEQD/WGS84 (заход 14, одна метрика)"
+min_dist_to_boundary_vertices_m;6707.864;"E02493; AEQD/WGS84"
 min_dist_to_boundary_segments_m;6707.864;"E02493; AEQD/WGS84; (б)=(а), ближайшая точка — вершина"
 table3_datings_all_pct;75.4;createDate непустое и не «не определена»
 table4_z_memorials;"2.3; -0.5";ПИ+wow: 839/66

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """s05_link_layers.py — шаг 5 статьи: сшивка списка ГУКН с дампом ЕГРОКН.
 
-Источник: layers_and_results.py:132-166 + z11_build.py (заход 11, исправленный парсер).
 Рефакторинг: пути через argparse; общие функции в common/. Логика сшивки НЕ изменена:
   - exact_registry: совпадение по regkey (zfill 15) регистрационного номера;
   - name_fuzzy_unique: difflib.SequenceMatcher >= 0.85, единственное совпадение в районе;

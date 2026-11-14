@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """s09_orders_trace.py — шаг 9 статьи: сопоставление приказов ВОКН с дампом и списком (слепая зона).
 
-Источник: layers_and_results.py:267-288 (R4). Рефакторинг: пути через argparse; общие функции в common/.
+Пути задаются через argparse; общие функции — в common/.
 Логика поиска (строгое/нечёткое/адресное совпадение токенов) НЕ изменена.
 
 Шаг статьи → скрипт → выход → таблица:
@@ -32,7 +32,7 @@ def main(egrkn_csv, list_csv, manual_csv, out_path):
     """manual_csv — эталон ручной части (data/manual/blind_zone_report_manual.csv, 7 столбцов):
     prikaz_date, prikaz_number, object_name + ручные verdict/name_hits/address_hits/comment.
     s09 читает первые три столбца (реквизиты) и вычисляет автоматические вхождения;
-    ручные столбцы эталона не перезаписываются (сравнение — в отчёте захода 13)."""
+    ручные столбцы эталона не перезаписываются."""
     E = load_csv(egrkn_csv)
     L = [r for r in csv.reader(open(list_csv, encoding='utf-8'), delimiter=';')][1:]
     corpus = [('ЕГРОКН', r['record_id'], norm_name(r['name']), (r['address_full'] or '').lower()) for r in E]

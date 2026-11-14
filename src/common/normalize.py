@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""normalize.py — нормализация наименований и районов (из layers_and_results.py:20-29, egrkn_pipeline_v131.py:11-22)."""
+"""normalize.py — нормализация наименований и районов."""
 import re, unicodedata
 
 PREFIXES = ['объект культурного наследия', 'окн регионального значения', 'окн федерального значения', 'окн',
@@ -12,7 +12,7 @@ def norm_name(s):
     return re.sub(r'\s+', ' ', s).strip()
 
 def norm_name_pipeline(s):
-    """norm_name из egrkn_pipeline_v131 с снятием префиксов (для s01)."""
+    """Нормализация наименования со снятием префиксов (для s01)."""
     if not s: return ''
     s = norm_name(s)
     changed = True

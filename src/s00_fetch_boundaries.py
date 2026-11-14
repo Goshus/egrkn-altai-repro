@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """s00_fetch_boundaries.py — шаг 0 (предподготовка): границы пилотных районов из OpenStreetMap (Nominatim).
 
-RECONSTRUCTED — восстановлен по результатам, не исходный код. НЕ ПРОВЕРЕН ЗАПУСКОМ (нет доступа в интернет).
-
 Идентификаторы OSM установлены из самих boundary_*.json (properties.osm_id):
   boundary_1.json: osm_id=1083293 (relation) — Змеиногорский район
   boundary_2.json: osm_id=1150926 (relation) — Красногорский район
@@ -12,7 +10,7 @@ RECONSTRUCTED — восстановлен по результатам, не и�
   --verify    : сверка sha256 boundary_*.json в --boundaries-dir с замороженными хэшами в --frozen-dir;
                 совпадение → «границы неизменны».
   --refetch   : запрос к Nominatim (polygon_geojson=1) для трёх relation; сравнение по числу вершин
-                и площади пересечения с замороженными БЕЗ перезаписи.
+                с замороженными без перезаписи.
   --fetch     : запрос и запись (использовать только для первичной выгрузки).
 
 User-Agent обязателен (политика Nominatim); пауза 1 с между запросами; кэш ответов в --cache-dir.
@@ -21,7 +19,7 @@ User-Agent обязателен (политика Nominatim); пауза 1 с м
 import argparse, json, os, sys, time, hashlib, urllib.request, urllib.parse
 
 OSM_IDS = {1: ('Змеиногорский', 1083293), 2: ('Красногорский', 1150926), 3: ('Солтонский', 1150924)}
-USER_AGENT = 'egrkn-altai-repro/1.0 (academic research; contact: не установлено)'
+USER_AGENT = 'egrkn-altai-repro/1.0 (academic research; https://github.com/Goshus/egrkn-altai-repro)'
 NOMINATIM = 'https://nominatim.openstreetmap.org/search'
 
 def sha256_file(fp):

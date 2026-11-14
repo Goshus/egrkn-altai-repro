@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""io.py — ввод-вывод CSV/JSON/docx (из layers_and_results.py + build_final_table.py)."""
+"""io.py — ввод-вывод CSV/JSON/docx."""
 import csv, json, os, re, zipfile
 
 def load_csv(p, delim=';'):
