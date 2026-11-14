@@ -1,5 +1,5 @@
-# Python 3.12 (проверено)
-matplotlib==3.9.2   # рисунки (src/s10_figures.py)
-pyproj==3.7.2       # расстояния до границы района в проекции AEQD (src/s07_geo_control.py)
-PyYAML==6.0.3       # необязательно: чтение config/params.yaml
+# Проверено на Python 3.12; на Python 3.14 для matplotlib нужна версия не ниже 3.10.5
+matplotlib>=3.10.5  # рисунки (src/s10_figures.py)
+pyproj>=3.7.2       # расстояния до границы района в проекции AEQD (src/s07_geo_control.py)
+PyYAML>=6.0.3       # необязательно: чтение config/params.yaml
 # для запуска тестов: pip install pytest
